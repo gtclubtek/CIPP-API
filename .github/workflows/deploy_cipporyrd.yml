@@ -1,0 +1,29 @@
+# Deploys the CIPP-API PowerShell Functions project to the self-hosted Azure Function App.
+# Mirrors CyberDrain's standard functions-action deploy. Triggers on push to master (fork sync) or manually.
+name: Build and deploy PowerShell project to Azure Function App - cipporyrd
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: 'cipporyrd'
+          slot-name: 'Production'
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CIPPORYRD }}
